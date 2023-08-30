@@ -2,7 +2,7 @@
 <html lang="en" dir="ltr">
   <head>
     <meta charset="utf-8">
-    <script src="src/index.js" charset="utf-8"></script>
+    <script defer src="src/index.js" charset="utf-8"></script>
     <link rel="stylesheet" href="style.css">
     <title>Duck Manager 2022</title>
   </head>
@@ -25,11 +25,11 @@
     </div>
 
     <form id="new-duck-form">
-      <label for="duck-name-input">New Duck Name:</label>
-      <input type="text" name="duck-name-input">
+      <label for="fduck-name-input">New Duck Name:</label>
+      <input type="text" id="duck-name-input">
 
-      <label for="duck-image-input">New Duck Image URL:</label>
-      <input type="text" name="duck-image-input">
+      <label for="fduck-image-input">New Duck Image URL:</label>
+      <input type="text" id="duck-image-input">
 
       <input type="submit" value="Create Duck">
     </form>

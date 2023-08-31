@@ -1,5 +1,5 @@
 body {
-  background: lightblue;
+  background: grey;
   text-align: center;
 }
 
@@ -24,7 +24,7 @@ body {
 }
 
 #duck-display button {
-  background: pink;
+  background: red;
   border: solid black 1px;
   border-radius: 0.5em;
   margin-top: 1em;
@@ -33,7 +33,7 @@ body {
 }
 
 form {
-  background: yellow;
+  background: white;
   margin: 2em;
 }
 

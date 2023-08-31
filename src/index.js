@@ -1,57 +1,114 @@
 document.addEventListener("DOMContentLoaded", function () {
 
-    const navPatos = document.getElementById("duck-nav");
-    const divPatosName = document.getElementById("duck-display-name");
-    const divPatosFoto = document.getElementById("duck-display-image");
-    const divBTNPatosLikes = document.getElementById("duck-display-likes");
-    const formNuevoPato = document.getElementById("new-duck-form");
-    const formNuevoPatoNombre = document.getElementById("duck-name-input");
-    const formNuevoPatoImg = document.getElementById("duck-image-input");
+    const divDucdisplay = document.getElementById("duck-nav");
+    const divPatoName = document.getElementById("duck-display-name");
+    const divPatoImg = document.getElementById("duck-display-image");
+    const btnPatoLikes = document.getElementById("duck-display-likes");
+    const boxPatoID = document.getElementById("borrar pato");
+    const formNewPato = document.getElementById("new-duck-form");
+    
 
-    let actualLikes = 0
+    fetch("http://localhost:3000/ducks")
+    .then(rspd => rspd.json())
+    .then(data => {
+        data.forEach(pato => {
+            showAll(pato);
+        });
+        showAtFront(data[0]); 
+    });
 
-    function mostrarPatos(a) {
-        
-        divPatosName.textContent = a.name;
-        divPatosFoto.src=a.img_url;
-        divBTNPatosLikes.textContent = `${a.likes} likes!`;
-        actualLikes = a.likes
+    function showAll(a) {
+        const navDuckimg = document.createElement('img');
+        navDuckimg.src = a.img_url;
+        divDucdisplay.append(navDuckimg);
+
+        navDuckimg.addEventListener("click",function() {
+            showAtFront(a);
+        });
+    }
+
+    function showAtFront(a){
+        divPatoName.textContent = a.name;
+        divPatoImg.src = a.img_url;
+        btnPatoLikes.textContent = `${a.likes} likes!`;
+        boxPatoID.textContent = `Delete duck:#${a.id}`;
+
+    }
+
+    function postnewpato (a) {
+        const navDuckimg = document.createElement('img');
+        navDuckimg.src = a.img_url;
+        divDucdisplay.append(navDuckimg);
+      
     }
 
 
-    fetch("http://localhost:3000/ducks")
-    .then(response => response.json())
-    .then(data => {
+    btnPatoLikes.addEventListener("click", function() {
+        
+        let textoConLikes = btnPatoLikes.textContent;
+        let currentlikes = parseInt(textoConLikes.slice(0, -7)) ;
+        currentlikes = currentlikes + 1;
+        btnPatoLikes.textContent = `${currentlikes} likes!`;
 
-        data.forEach(pato => {
-            const patosNavFotos = document.createElement("img");
-            patosNavFotos.src = pato.img_url;
-            navPatos.appendChild(patosNavFotos);
-            
-            patosNavFotos.addEventListener("click", () => {
-            mostrarPatos (pato);
-            });   
-        }); 
+        const updateLikesPatos = {
+            likes: currentlikes
+        }
 
-        mostrarPatos (data[0]);
+        let textoConID = boxPatoID.textContent
+        let currenID = parseInt(textoConID.substring(13));
+        
 
-        divBTNPatosLikes.addEventListener("click", () => {
-            console.log(actualLikes)
-            actualLikes = actualLikes + 1
-            console.log(actualLikes)
-            divBTNPatosLikes.textContent = `${actualLikes} likes!`;
-        });
+        fetch(`http://localhost:3000/ducks/${currenID}`, {
+            method: 'PATCH',
+            headers: {
+            'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(updateLikesPatos)
+        })
+            .then(response => {
+                location.reload()
+        })
+    });
 
-        formNuevoPato.addEventListener("submit", (event) => {
-            event.preventDefault()
+    formNewPato.addEventListener('submit', event => {
+        event.preventDefault();
 
-            const newDuck = {
-                id: data.length + 1, 
-                name: formNuevoPatoNombre.value,
-                img_url: formNuevoPatoImg.value,
-                likes: 0
-            };
-            data.push(newDuck);
+        const newDuckName = document.getElementById("duck-name-input").value;
+        const newDuckImg = document.getElementById("duck-image-input").value;
+
+        const nuevopato = {
+            id : "",
+            name : newDuckName,
+            img_url : newDuckImg,
+            likes: 0
+        }
+
+        postnewpato(nuevopato);
+
+       
+
+        fetch(`http://localhost:3000/ducks/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(nuevopato)
+        })
+        .then(response => response.json())
+        .then(newdataadded => {
+            location.reload()
+        })
+    });
+
+    boxPatoID.addEventListener("click", function() {
+        let textoConID = boxPatoID.textContent
+        let currenID = parseInt(textoConID.substring(13));
+       
+        fetch(`http://localhost:3000/ducks/${currenID}`, {
+            method: 'DELETE',
+        })
+        .then(resp => {
+            location.reload()
         })
     });
 }); 
